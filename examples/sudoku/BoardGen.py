@@ -7,7 +7,8 @@ import evo_core.evo_tools.Individuals as Individuals
 
 import examples.sudoku.Sudoku as Sudoku
 
-BOARD_SIZE = 4
+BOARD_SIZE = 9
+DEBUG_OUTPUT = True
 
 
 class BoardGenIndividual(Individuals.IntVectorIndividual):
@@ -38,6 +39,8 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
         return cp.deepcopy(self)
 
     def calculate_fitness(self):
+        self.phenome = self.develop()
+        self.sudoku = Sudoku.Sudoku(self.phenome)
         self.fitness = 100.0 * (1 / (self.sudoku.evaluate_board()['mistake_count'] + 1))
         return self.fitness
 
@@ -45,7 +48,7 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
         return self.fitness
 
     def __str__(self):
-        return str(self.genome)
+        return '\n' + str(self.phenome)
 
 
 class SwapMutationPhase(Evolution.EvoPhase):
@@ -59,18 +62,20 @@ class SwapMutationPhase(Evolution.EvoPhase):
                 size = ind.size
                 constraints = ind.constraints
                 while True:
-                    row = r.randint(0, size - 1)
+                    row = r.choice(range(size))
                     cols = r.sample(range(size), 2)
                     if constraints is None or (constraints[row][cols[0]] == 0 and constraints[row][cols[1]] == 0):
+                        # print(ind.genome)
                         ind.rewrite_multiple_genes([size * row + cols[0], size * row + cols[1]],
-                                                   [size * row + cols[1], size * row + cols[0]])
+                                                   [ind.genome[size * row + cols[1]], ind.genome[size * row + cols[0]]])
+                        # print(ind.genome)
+                        # print("*****")
                         break
 
         return population
 
 
 class FitnessEvaluationPhase(Evolution.EvoPhase):
-
     def run(self, population):
         for ind in population:
             ind.calculate_fitness()
