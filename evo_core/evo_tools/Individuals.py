@@ -13,6 +13,9 @@ class VectorIndividual(Individual):
     def develop(self):
         return cp.deepcopy(self.genome)
 
+    def self_replicate(self):
+        return cp.deepcopy(self)
+
     # Phase tools
 
     def perform_uniform_plus_mutation(self, mutation_probability=None):

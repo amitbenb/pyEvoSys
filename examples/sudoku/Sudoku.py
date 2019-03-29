@@ -32,14 +32,19 @@ class Sudoku:
                 ret_val['bad_elements'] += 1
         return ret_val
 
+    def __str__(self):
+        return 'Sudoku(' + '\n' + str(self.board) + ')'
+
 
 if __name__ == "__main__":
-    _board = np.array(np.random.permutation((np.arange(1,17) % 4) + 1)).reshape(4, 4)
+    _board = np.array(np.random.permutation((np.arange(1, 17) % 4) + 1)).reshape(4, 4)
     # _board = np.array(list(range(1, 82))).reshape(9, 9)
     print(_board)
     print()
-    s = Sudoku(_board)
-    print(s.get_elements())
-    print()
-    print(s.evaluate_board())
+    _s = Sudoku(_board)
+    print(_s)
+    # print()
+    # print(s.get_elements())
+    # print()
+    # print(s.evaluate_board())
 
