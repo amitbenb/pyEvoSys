@@ -83,3 +83,21 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
         return population
 
 
+def generate_genome_for_constraints(size, constraints=None):
+    if constraints is None:
+        return np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size)))
+    else:
+        ans = np.zeros((size, size), int)
+        for i in range(size):
+            permuted_row = np.random.permutation([j for j in range(1, size + 1) if j not in constraints[i]])
+            k = 0
+            for j in range(size):
+                if constraints[i][j] != 0:
+                    ans[i][j] = constraints[i][j]
+                else:
+                    ans[i][j] = permuted_row[k]
+                    k += 1
+
+        return np.concatenate([i for i in ans])
+
+

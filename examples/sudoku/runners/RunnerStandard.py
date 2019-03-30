@@ -9,17 +9,25 @@ from evo_core.evo_tools import Selection
 from evo_core.evo_tools import MiscPhases
 
 import examples.sudoku.BoardGen as BoardGen
+from examples.sudoku.SudokuConstants import EASY_BOARD
 
 if __name__ == "__main__":
     num_of_generations = 200
     pop_size = 1000
     size = BoardGen.BOARD_SIZE
+    # constraints = None
+    constraints = EASY_BOARD
     # print(np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size))))
     # input()
+    # inds = [BoardGen.BoardGenIndividual(
+    #     genome=np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size))),
+    #     size=size)
+    #     for _ in range(pop_size)]
     inds = [BoardGen.BoardGenIndividual(
-        genome=np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size))),
+        genome=BoardGen.generate_genome_for_constraints(size, constraints=constraints),
         size=size)
         for _ in range(pop_size)]
+
 
     # pop = PopContainers.SimplePopulation()
     pop = PopContainers.SimplePopulationWithElite()
