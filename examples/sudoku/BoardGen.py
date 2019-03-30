@@ -7,7 +7,6 @@ import evo_core.evo_tools.Individuals as Individuals
 
 import examples.sudoku.Sudoku as Sudoku
 
-BOARD_SIZE = 9
 DEBUG_OUTPUT = True
 
 
@@ -65,11 +64,16 @@ class SwapMutationPhase(Evolution.EvoPhase):
                     row = r.choice(range(size))
                     cols = r.sample(range(size), 2)
                     if constraints is None or (constraints[row][cols[0]] == 0 and constraints[row][cols[1]] == 0):
-                        # print(ind.genome)
+                        # if row == 0:
+                        #     print(ind.genome[:16])
+                        #     print(cols[0], cols[1])
+                        #     print(constraints[row])
+                        #     print("*****")
                         ind.rewrite_multiple_genes([size * row + cols[0], size * row + cols[1]],
                                                    [ind.genome[size * row + cols[1]], ind.genome[size * row + cols[0]]])
-                        # print(ind.genome)
-                        # print("*****")
+                        # if row == 0:
+                        #     print(ind.genome[:16])
+                        #     print("*****")
                         break
 
         return population
