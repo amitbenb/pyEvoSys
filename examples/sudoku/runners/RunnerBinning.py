@@ -13,14 +13,14 @@ import examples.sudoku.runners.RunParams as RPs
 
 if __name__ == "__main__":
 
+    binning_function = lambda x: Binning.hash_based_binning(x, EPs.size, number_of_bins)
+    select_p = Selection.BinnedTournamentSelectionPhase(EPs.get_fitness, tour_size=EPs.tour_size,
+                                                        binning_func=binning_function)
     for i in range(RPs.number_of_simulations):
         init_p = MiscPhases.SimpleInitPhase(EPs.num_of_generations)
         number_of_bins = int(np.sqrt(EPs.pop_size))
-        binning_function = lambda x: Binning.hash_based_binning(x, EPs.size, number_of_bins)
-        select_p = Selection.BinnedTournamentSelectionPhase(EPs.get_fitness, tour_size=EPs.tour_size,
-                                                            binning_func=binning_function)
 
-        out_file_path = RPs.out_path + 'out' + str(i).zfill(3) + '.txt'
+        out_file_path = RPs.out_path + 'out' +str(number_of_bins) + 'bins' + str(i).zfill(3) + '.txt'
         record_p = MiscPhases.MaintainRecordBestsPhase(EPs.get_fitness, out_file_path=out_file_path,
                                                        debug_output=BoardGen.DEBUG_OUTPUT)
 
