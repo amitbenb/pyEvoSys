@@ -1,5 +1,5 @@
+import math
 import random as rn
-import copy as cp
 
 from evo_core.Evolution import EvoPhase
 from evo_core import Population_Containers
@@ -107,20 +107,22 @@ class BinnedTournamentSelectionPhase(TournamentSelectionPhase):
         new_pop = []
         self.target_length = len(population)
         binned_pop = self.binning_func(pop)
+        binned_pop = [i for i in binned_pop if len(i) > 0]
 
         print(len(binned_pop), [len(i) for i in binned_pop])
 
-        for bin in binned_pop:
+        for bin0 in binned_pop:
             selected_inds = []
-            while len(selected_inds) < len(bin):
+            bin_length_after_selection = int(math.ceil(self.target_length / len(binned_pop)))
+            while len(selected_inds) < bin_length_after_selection:
                 selected_inds += [i.self_replicate() for i in
-                                  self.select_best(rn.sample(bin, min(self.tour_size, len(bin))))]
-            new_pop += selected_inds[:len(bin)]
+                                  self.select_best(rn.sample(bin0, min(self.tour_size, len(bin0))))]
+            new_pop += selected_inds[:bin_length_after_selection]
 
-        new_pop = new_pop[:self.target_length]
+        print(len(new_pop), self.target_length)
+        new_pop = rn.sample(new_pop, self.target_length)
 
         return population.update_pop([i.self_replicate() for i in new_pop])
-        pass
 
 
 class SimpleCloneLimitingPhase(EvoPhase):

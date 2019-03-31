@@ -20,7 +20,8 @@ init_p = MiscPhases.SimpleInitPhase(num_of_generations)
 size = examples.sudoku.SudokuConstants.BOARD_SIZE
 # constraints = None
 # constraints = Consts.EASY_BOARD
-constraints = Consts.one_line_board()
+constraints = Consts.HARD_BOARD
+# constraints = Consts.one_line_board()
 # print(np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size))))
 # input()
 # inds = [BoardGen.BoardGenIndividual(
@@ -36,7 +37,6 @@ inds = [BoardGen.BoardGenIndividual(
 pop = PopContainers.SimplePopulationWithElite()
 pop.update_pop(inds)
 
-init_p = MiscPhases.SimpleInitPhase(num_of_generations)
 select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=tour_size)
 mut_p = BoardGen.SwapMutationPhase(probability=mut_prob)
 eval_p = BoardGen.FitnessEvaluationPhase()
