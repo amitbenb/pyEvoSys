@@ -119,7 +119,7 @@ class BinnedTournamentSelectionPhase(TournamentSelectionPhase):
                                   self.select_best(rn.sample(bin0, min(self.tour_size, len(bin0))))]
             new_pop += selected_inds[:bin_length_after_selection]
 
-        print(len(new_pop), self.target_length)
+        # print(len(new_pop), self.target_length)
         new_pop = rn.sample(new_pop, self.target_length)
 
         return population.update_pop([i.self_replicate() for i in new_pop])

@@ -87,6 +87,50 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
         return population
 
 
+class SaveSolutionsPhase(Evolution.EvoPhase):
+    def __init__(self):
+        self.solutions = []
+        self.solution_hashes = []
+
+    def run(self, population):
+        for ind in population:
+            if ind.get_fitness() == 100.0:
+                hash_value = hash(str(ind.phenome))
+                # print(hash_value)
+                if hash_value not in self.solution_hashes:
+                    # print(len(self.solutions))
+                    self.solution_hashes.append(hash_value)
+                    self.solutions.append(cp.deepcopy(ind.phenome))
+                    # print(len(self.solutions))
+
+        return population
+
+
+class FitnessDistorterPhase(Evolution.EvoPhase):
+    def __init__(self, solutions_phase, solution_grace_period):
+        """
+        :param solutions_phase: the SaveSolutionsPhase phase that contains solutions already found
+        :param solution_grace_period: once every solution_grace_period
+                                      the list of forbidden solution hashes is updated.
+        """
+        self.solutions_phase = solutions_phase
+        self.forbidden_hashes = []
+        self.solution_grace_period = solution_grace_period
+        self.gen_counter = 0
+
+    def run(self, population):
+        self.gen_counter += 1
+        if self.gen_counter >= self.solution_grace_period:
+            self.gen_counter = 0
+            self.forbidden_hashes = cp.deepcopy(self.solutions_phase.solution_hashes)
+        for ind in population:
+            if ind.get_fitness() == 100.0:
+                hash_value = hash(str(ind.phenome))
+                if hash_value in self.forbidden_hashes:
+                    ind.fitness = 0.0
+        return population
+
+
 def generate_genome_for_constraints(size, constraints=None):
     if constraints is None:
         return np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size)))
