@@ -25,10 +25,14 @@ if __name__ == "__main__":
 
         # cyc = Evolution.Cycle(
         #     [EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.elite_m_p, EPs.eval_p, record_p, save_solutions_p])
-        cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.elite_m_p, EPs.eval_p, record_p,
-                               save_solutions_p, distorter_p])
-        ebody = Evolution.EpochBasicBody(cyc, EPs.init_p.check_gen_limit)
-        epo = Evolution.Epoch(ebody, init_cycle=Evolution.Cycle([EPs.init_p, EPs.eval_p, record_p, save_solutions_p]))
+        cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
+                               save_solutions_p])
+        # cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.elite_m_p, EPs.eval_p, record_p,
+        #                        save_solutions_p, distorter_p])
+        cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
+                               save_solutions_p])
+        ebody = Evolution.EpochBasicBody(cyc, init_p.check_gen_limit)
+        epo = Evolution.Epoch(ebody, init_cycle=Evolution.Cycle([init_p, EPs.eval_p, record_p, save_solutions_p]))
         evo = Evolution.Evolution(epo)
 
         _t1 = t.time()

@@ -8,8 +8,8 @@ from evo_core.evo_tools import MiscPhases
 import examples.sudoku.BoardGen as BoardGen
 import examples.sudoku.SudokuConstants as Consts
 
-num_of_generations = 2000
-pop_size = 1000
+num_of_generations = 200
+pop_size = 200
 mut_prob = 0.8
 tour_size = 4
 elite_size = 4
@@ -40,6 +40,7 @@ pop.update_pop(inds)
 
 select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=tour_size)
 mut_p = BoardGen.SwapMutationPhase(probability=mut_prob)
+gxo_p = BoardGen.GreedyPopulationCrossoverPhase(probability=1.0)
 eval_p = BoardGen.FitnessEvaluationPhase()
 elite_e_p = Selection.SimpleExtractElitePhase(get_fitness, elite_size=elite_size)
 elite_m_p = Selection.SimpleMergeElitePhase()

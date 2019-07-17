@@ -1,6 +1,10 @@
 BOARD_SIZE = 9
 
 
+def empty_board(size=BOARD_SIZE):
+    return [[0 for _ in range(size)] for _ in range(size)]
+
+
 def one_line_board(size=BOARD_SIZE):
     return [list(range(1, size+1))] + [[0 for _ in range(size)] for _ in range(size-1)]
 

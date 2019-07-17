@@ -6,6 +6,7 @@ import evo_core.Evolution as Evolution
 import evo_core.evo_tools.Individuals as Individuals
 
 import examples.sudoku.Sudoku as Sudoku
+import examples.sudoku.SudokuConstants as SudConsts
 
 DEBUG_OUTPUT = True
 
@@ -19,6 +20,10 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
         self.sudoku = Sudoku.Sudoku(self.phenome)
 
     def develop(self):
+        """
+
+        :return: The phenotype for the Suduku
+        """
         size = self.size
         board = np.zeros((size,  size), int).reshape(size, size)
         constraints = self.constraints
@@ -77,6 +82,71 @@ class SwapMutationPhase(Evolution.EvoPhase):
                         break
 
         return population
+
+
+class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
+    def __init__(self, probability=1.0):
+        self.probability = min(1.0, max(probability, 0.0))
+
+    def run(self, population):
+
+        prob = self.probability
+        new_pop = [None for _ in population]
+        for idx, ind in enumerate(population):
+            if r.random() < prob:
+                s = Sudoku.Sudoku(ind.constraints if ind.constraints is not None else SudConsts.empty_board(ind.size))
+                row_order = np.random.permutation(ind.size)
+                # ind keeps line of index row_order[0]
+                s.board[row_order[0]] = cp.deepcopy(ind.phenome[row_order[0]])
+                for line_idx in row_order[1:]:
+                    self.add_best_row(population, line_idx, s)
+
+                new_pop[idx] = BoardGenIndividual(s.board.flatten(), s.size, population[idx].constraints)
+
+            else:
+                new_pop[idx] = population[idx]
+
+        population.update_pop(new_pop)
+
+        return population
+
+    def add_best_row(self, population, row_idx, board):
+        """
+
+        :param population:
+        :param row_idx:
+        :param board: Sudoku Board (type Sudoku.Sudoku)
+        :return:
+        """
+        ind_order = np.random.permutation(len(population))
+        curr_row = population[ind_order[0]].sudoku.board[row_idx]
+        curr_constraints_penalty = self.add_row_constraints_penalty(curr_row, board, row_idx)
+        for ind_idx in ind_order[1:]:
+            candidate_row = population[ind_order[ind_idx]].sudoku.board[row_idx]
+            candidate_row_penalty = self.add_row_constraints_penalty(curr_row, board, row_idx)
+            if curr_constraints_penalty > candidate_row_penalty:
+                curr_row = candidate_row
+                curr_constraints_penalty = candidate_row_penalty
+
+        board.board[row_idx] = cp.deepcopy(curr_row)
+
+    @staticmethod
+    def add_row_constraints_penalty(curr_row, board, row_idx):
+        """
+
+        :param curr_row:
+        :param board: Sudoku Board (type Sudoku.Sudoku)
+        :param row_idx:
+        :return: Number of constraints broken by adding row.
+        """
+        old_row = board.board[row_idx]  # Backup
+        board.board[row_idx] = curr_row  # try out the new row.
+
+        ret_val = board.evaluate_board()['mistake_count']
+
+        board.board[row_idx] = old_row  # Revert to original
+
+        return ret_val
 
 
 class FitnessEvaluationPhase(Evolution.EvoPhase):
