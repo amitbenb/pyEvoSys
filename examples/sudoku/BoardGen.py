@@ -85,8 +85,9 @@ class SwapMutationPhase(Evolution.EvoPhase):
 
 
 class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
-    def __init__(self, probability=1.0):
+    def __init__(self, probability=1.0, batch_size=2):
         self.probability = min(1.0, max(probability, 0.0))
+        self.batch_size = batch_size
 
     def run(self, population):
 
@@ -97,8 +98,10 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
                 s = Sudoku.Sudoku(ind.constraints if ind.constraints is not None else SudConsts.empty_board(ind.size))
                 row_order = np.random.permutation(ind.size)
                 # ind keeps line of index row_order[0]
-                s.board[row_order[0]] = cp.deepcopy(ind.phenome[row_order[0]])
-                for line_idx in row_order[1:]:
+                # s.board[row_order[0]] = cp.deepcopy(ind.phenome[row_order[0]])
+                # for line_idx in row_order[1:]:
+                #     self.add_best_row(population, line_idx, s)
+                for line_idx in row_order:
                     self.add_best_row(population, line_idx, s)
 
                 new_pop[idx] = BoardGenIndividual(s.board.flatten(), s.size, population[idx].constraints)
@@ -119,10 +122,11 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
         :return:
         """
         ind_order = np.random.permutation(len(population))
+        # ind_order = np.random.permutation(len(population))[:self.batch_size]
         curr_row = population[ind_order[0]].sudoku.board[row_idx]
         curr_constraints_penalty = self.add_row_constraints_penalty(curr_row, board, row_idx)
         for ind_idx in ind_order[1:]:
-            candidate_row = population[ind_order[ind_idx]].sudoku.board[row_idx]
+            candidate_row = population[ind_idx].sudoku.board[row_idx]
             candidate_row_penalty = self.add_row_constraints_penalty(curr_row, board, row_idx)
             if curr_constraints_penalty > candidate_row_penalty:
                 curr_row = candidate_row
