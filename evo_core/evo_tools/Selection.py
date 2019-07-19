@@ -5,6 +5,26 @@ from evo_core.Evolution import EvoPhase
 from evo_core import Population_Containers
 
 
+class NullSelectionPhase(EvoPhase):
+    def __init__(self, target_length=None):
+        # super(TournamentSelectionPhase, self).__init__()
+        self.target_length = target_length
+
+    def run(self, population):
+        population: Population_Containers.SimplePopulation
+        # pop = [i.self_replicate() for i in population]
+        new_pop = []
+        if self.target_length is None:
+            self.target_length = len(population)
+
+        while len(new_pop) < self.target_length:
+            new_pop += [i for i in population]
+            # new_pop += cp.deepcopy(self.select_best(rn.sample(pop, self.tour_size)))
+        new_pop = rn.sample(new_pop, self.target_length)
+
+        return population.update_pop([i.self_replicate() for i in new_pop])
+
+
 class SimpleExtractElitePhase(EvoPhase):
     def __init__(self, fitness_getter_function, elite_size=5, use_ratio=False, clone_max=None):
         """
