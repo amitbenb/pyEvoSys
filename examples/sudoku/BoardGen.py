@@ -15,6 +15,7 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
     def __init__(self, genome, size, constraints=None):
         self.size = size
         self.constraints = constraints
+        self.evaluated = None
         self.fitness = 0.0
         super(BoardGenIndividual, self).__init__(genome, min_int=1, max_int=size)
         self.sudoku = Sudoku.Sudoku(self.phenome)
@@ -45,7 +46,8 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
     def calculate_fitness(self):
         self.phenome = self.develop()
         self.sudoku = Sudoku.Sudoku(self.phenome)
-        self.fitness = 100.0 * (1 / (self.sudoku.evaluate_board()['mistake_count'] + 1))
+        self.evaluated = self.sudoku.evaluate_board()
+        self.fitness = 100.0 * (1 / (self.evaluated['mistake_count'] + 1))
         return self.fitness
 
     def get_fitness(self):
@@ -84,6 +86,53 @@ class SwapMutationPhase(Evolution.EvoPhase):
         return population
 
 
+class GreedySwapMutationPhase(Evolution.EvoPhase):
+    def __init__(self, width=1, depth=1, probability=1.0):
+        self.prob = probability
+        self.width = width
+        self.depth = depth
+
+    def run(self, population):
+        prob = self.prob
+        for ind in population:
+            if r.random() < prob:
+                ind.calculate_fitness()
+                self.mutate(ind)
+
+        return population
+
+    def mutate(self, ind):
+        size = ind.size
+        constraints = ind.constraints
+        mistakes = ind.evaluated['mistake_count']
+        mutation_successful = False
+        for j in range(self.depth):
+            for i in range(self.width):
+                mutation_successful = False
+                while True:
+                    row = r.choice(range(size))
+                    cols = r.sample(range(size), 2)
+                    if constraints is None or (constraints[row][cols[0]] == 0 and constraints[row][cols[1]] == 0):
+                        ind.rewrite_multiple_genes([size * row + cols[0], size * row + cols[1]],
+                                                   [ind.genome[size * row + cols[1]], ind.genome[size * row + cols[0]]])
+                        break
+                ind.calculate_fitness()
+                if ind.evaluated['mistake_count'] < mistakes:
+                    mutation_successful = True
+                    mistakes = ind.evaluated['mistake_count']
+                else:
+                    # Undo mutation
+                    ind.rewrite_multiple_genes([size * row + cols[0], size * row + cols[1]],
+                                               [ind.genome[size * row + cols[1]], ind.genome[size * row + cols[0]]])
+                if mutation_successful:
+                    break
+
+            if mutation_successful:
+                pass  # just let the inner loop try another mutation if depth is not exauhsted
+            else:
+                break  # Only keep mutating if you did well last time.
+
+
 class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
     def __init__(self, probability=1.0, batch_size=2):
         self.probability = min(1.0, max(probability, 0.0))
@@ -101,8 +150,8 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
                 # s.board[row_order[0]] = cp.deepcopy(ind.phenome[row_order[0]])
                 # for line_idx in row_order[1:]:
                 #     self.add_best_row(population, line_idx, s)
-                for line_idx in row_order:
-                    self.add_best_row(population, line_idx, s)
+                for row_idx in row_order:
+                    self.add_best_row(population, row_idx, s)
 
                 new_pop[idx] = BoardGenIndividual(s.board.flatten(), s.size, population[idx].constraints)
 
@@ -121,8 +170,8 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
         :param board: Sudoku Board (type Sudoku.Sudoku)
         :return:
         """
-        ind_order = np.random.permutation(len(population))
-        # ind_order = np.random.permutation(len(population))[:self.batch_size]
+        # ind_order = np.random.permutation(len(population))
+        ind_order = np.random.permutation(len(population))[:self.batch_size]
         curr_row = population[ind_order[0]].sudoku.board[row_idx]
         curr_constraints_penalty = self.add_row_constraints_penalty(curr_row, board, row_idx)
         for ind_idx in ind_order[1:]:
@@ -143,8 +192,13 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
         :param row_idx:
         :return: Number of constraints broken by adding row.
         """
-        old_row = board.board[row_idx]  # Backup
-        board.board[row_idx] = curr_row  # try out the new row.
+        old_row = cp.deepcopy(board.board[row_idx])  # Backup
+        # print(old_row)
+        # print(curr_row)
+        board.board[row_idx] = cp.deepcopy(curr_row)  # try out the new row.
+        # print(old_row)
+        # print(curr_row)
+        # input()
 
         ret_val = board.evaluate_board()['mistake_count']
 

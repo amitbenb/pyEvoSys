@@ -20,19 +20,18 @@ if __name__ == "__main__":
         out_file_path = RPs.out_path + 'out' + str(i).zfill(3) + '.txt'
         record_p = MiscPhases.MaintainRecordBestsPhase(EPs.get_fitness, out_file_path=out_file_path,
                                                        debug_output=BoardGen.DEBUG_OUTPUT)
-        save_solutions_p = BoardGen.SaveSolutionsPhase()
-        distorter_p = BoardGen.FitnessDistorterPhase(save_solutions_p, solution_grace_period=100)
 
         # cyc = Evolution.Cycle(
         #     [EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.elite_m_p, EPs.eval_p, record_p, save_solutions_p])
-        cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
-                               save_solutions_p])
-        # cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.elite_m_p, EPs.eval_p, record_p,
-        #                        save_solutions_p, distorter_p])
-        cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
-                               save_solutions_p])
+        # cyc = Evolution.Cycle([EPs.elite_e_p, EPs.select_p, EPs.mut_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
+        #                        save_solutions_p])
+        cyc = Evolution.Cycle(
+            [EPs.select_p, EPs.mut_p, EPs.gmut_p, EPs.eval_p, record_p, EPs.save_solutions_p, EPs.distorter_p])
+        # cyc = Evolution.Cycle(
+        #     [EPs.elite_e_p, EPs.null_select_p, EPs.mut_p, EPs.eval_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
+        #      save_solutions_p])
         ebody = Evolution.EpochBasicBody(cyc, init_p.check_gen_limit)
-        epo = Evolution.Epoch(ebody, init_cycle=Evolution.Cycle([init_p, EPs.eval_p, record_p, save_solutions_p]))
+        epo = Evolution.Epoch(ebody, init_cycle=Evolution.Cycle([init_p, EPs.eval_p, record_p, EPs.save_solutions_p]))
         evo = Evolution.Evolution(epo)
 
         _t1 = t.time()
@@ -45,7 +44,7 @@ if __name__ == "__main__":
             fit_f.write(str(i).zfill(3) + ', ' + str(record_p.best_ever_ind.get_fitness()) + '\n')
 
         with open(RPs.solution_file_name + str(i).zfill(3) + '.txt', 'w') as sol_f:
-            sol_f.write('Number of solutions = ' + str(len(save_solutions_p.solutions)) + '\n\n')
-            for sol in save_solutions_p.solutions:
+            sol_f.write('Number of solutions = ' + str(len(EPs.save_solutions_p.solutions)) + '\n\n')
+            for sol in EPs.save_solutions_p.solutions:
                 sol_f.write(str(sol) + '\n\n')
     pass

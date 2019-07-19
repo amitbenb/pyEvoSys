@@ -8,10 +8,13 @@ from evo_core.evo_tools import MiscPhases
 import examples.sudoku.BoardGen as BoardGen
 import examples.sudoku.SudokuConstants as Consts
 
-num_of_generations = 200
-pop_size = 200
-mut_prob = 0.8
-tour_size = 4
+num_of_generations = 500
+pop_size = 500
+mut_prob = 0.2
+gmut_prob = 1.0
+gmut_width = 10
+gmut_depth = 10
+tour_size = 2
 elite_size = 4
 
 get_fitness = BoardGen.BoardGenIndividual.get_fitness
@@ -38,10 +41,14 @@ inds = [BoardGen.BoardGenIndividual(
 pop = PopContainers.SimplePopulationWithElite()
 pop.update_pop(inds)
 
+null_select_p = Selection.NullSelectionPhase()
 select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=tour_size)
 mut_p = BoardGen.SwapMutationPhase(probability=mut_prob)
-gxo_p = BoardGen.GreedyPopulationCrossoverPhase(probability=1.0)
+gmut_p = BoardGen.GreedySwapMutationPhase(probability=gmut_prob, width=gmut_width, depth=gmut_depth)
+gxo_p = BoardGen.GreedyPopulationCrossoverPhase(probability=1.0, batch_size=4)
 eval_p = BoardGen.FitnessEvaluationPhase()
 elite_e_p = Selection.SimpleExtractElitePhase(get_fitness, elite_size=elite_size)
 elite_m_p = Selection.SimpleMergeElitePhase()
+save_solutions_p = BoardGen.SaveSolutionsPhase()
+distorter_p = BoardGen.FitnessDistorterPhase(save_solutions_p, solution_grace_period=100)
 # cyc = Evolution.Cycle([select_p, mut_p, eval_p, record_p])
