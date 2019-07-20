@@ -12,5 +12,5 @@ experiment_big_fit_out_file_name = out_path + 'big_fit_out.txt'
 
 solution_file_name = out_path + 'solutions'
 
-number_of_simulations = 5
+number_of_simulations = 2
 

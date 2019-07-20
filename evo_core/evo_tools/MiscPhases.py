@@ -16,6 +16,9 @@ class SimpleInitPhase(EvoPhase):
         self.gen_number += 1
         return ret_val
 
+    def __repr__(self):
+        return "SimpleInitPhase gen_limit=%d" % self.gen_limit
+
 
 class MaintainBestsPhase(EvoPhase):
     def __init__(self, fitness_getter_function, best_ever_ind=None):
@@ -33,6 +36,9 @@ class MaintainBestsPhase(EvoPhase):
                 else self.best_ind.self_replicate()
 
         return population
+
+    def __repr__(self):
+        return "MaintainBestsPhase"
 
 
 class MaintainRecordBestsPhase(EvoPhase):
@@ -67,4 +73,8 @@ class MaintainRecordBestsPhase(EvoPhase):
         self.gen_number += 1
 
         return population
+
+    def __repr__(self):
+        return "MaintainBestsPhase"
+
 

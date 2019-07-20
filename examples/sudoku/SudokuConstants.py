@@ -1,4 +1,4 @@
-BOARD_SIZE = 16
+BOARD_SIZE = 9
 
 
 def empty_board(size=BOARD_SIZE):

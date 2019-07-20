@@ -11,9 +11,6 @@ import examples.sudoku.runners.RunParams as RPs
 
 if __name__ == "__main__":
 
-    with open(RPs.experiment_big_fit_out_file_name, 'w') as fit_f:
-        fit_f.write("Sim#, Best_fitness\n")
-
     for i in range(RPs.number_of_simulations):
         init_p = MiscPhases.SimpleInitPhase(EPs.num_of_generations)
 
@@ -31,8 +28,13 @@ if __name__ == "__main__":
         #     [EPs.elite_e_p, EPs.null_select_p, EPs.mut_p, EPs.eval_p, EPs.gxo_p, EPs.elite_m_p, EPs.eval_p, record_p,
         #      save_solutions_p])
         ebody = Evolution.EpochBasicBody(cyc, init_p.check_gen_limit)
-        epo = Evolution.Epoch(ebody, init_cycle=Evolution.Cycle([init_p, EPs.eval_p, record_p, EPs.save_solutions_p]))
+        init_cyc = Evolution.Cycle([EPs.init_p, EPs.eval_p, record_p, EPs.save_solutions_p])
+        epo = Evolution.Epoch(ebody, init_cycle=init_cyc)
         evo = Evolution.Evolution(epo)
+
+        if i == 0:
+            with open(RPs.experiment_big_fit_out_file_name, 'w') as fit_f:
+                fit_f.write("Sim#, Best_fitness\n")
 
         _t1 = t.time()
         evo.run(EPs.pop)

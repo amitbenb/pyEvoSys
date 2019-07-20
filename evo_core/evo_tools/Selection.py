@@ -5,7 +5,7 @@ from evo_core.Evolution import EvoPhase
 from evo_core import Population_Containers
 
 
-class NullSelectionPhase(EvoPhase):
+class SimpleNullSelectionPhase(EvoPhase):
     def __init__(self, target_length=None):
         # super(TournamentSelectionPhase, self).__init__()
         self.target_length = target_length
@@ -23,6 +23,9 @@ class NullSelectionPhase(EvoPhase):
         new_pop = rn.sample(new_pop, self.target_length)
 
         return population.update_pop([i.self_replicate() for i in new_pop])
+
+    def __str__(self):
+        return "SimpleNullSelectionPhase target_length=%d" % self.target_length
 
 
 class SimpleExtractElitePhase(EvoPhase):
@@ -57,6 +60,12 @@ class SimpleExtractElitePhase(EvoPhase):
 
         return population
 
+    def __repr__(self):
+        if self.elite_ratio is True:
+            return "SimpleExtractElitePhase elite_ratio=%.3f clone_max=%s" % (self.elite_ratio, self.clone_max)
+        else:
+            return "SimpleExtractElitePhase elite_size=%d clone_max=%s" % (self.elite_size, self.clone_max)
+
 
 class SimpleMergeElitePhase(EvoPhase):
     def __init__(self):
@@ -70,6 +79,9 @@ class SimpleMergeElitePhase(EvoPhase):
         population.update_pop(population.get_everyone())
 
         return population
+
+    def __repr__(self):
+        return "SimpleMergeElitePhase"
 
 
 class TournamentSelectionPhase(EvoPhase):
@@ -108,6 +120,10 @@ class TournamentSelectionPhase(EvoPhase):
         #           sorted(tournament, key=lambda x: self.fitness_getter_function(x), reverse=True)[0]))
         return sorted(tournament, key=lambda x: self.fitness_getter_function(x), reverse=True)[:self.tour_winners]
 
+    def __repr__(self):
+        return "TournamentSelectionPhase tour_size=%d winners=%d target_length=%s" % (
+            self.tour_size, self.tour_winners, self.target_length)
+
 
 class BinnedTournamentSelectionPhase(TournamentSelectionPhase):
     def __init__(self, fitness_getter_function, tour_size=2, tour_winners=1, binning_func=None):
@@ -144,6 +160,10 @@ class BinnedTournamentSelectionPhase(TournamentSelectionPhase):
 
         return population.update_pop([i.self_replicate() for i in new_pop])
 
+    def __repr__(self):
+        return "BinnedTournamentSelectionPhase tour_size=%d winners=%d target_length=%s" % (
+            self.tour_size, self.tour_winners, self.target_length)
+
 
 class SimpleCloneLimitingPhase(EvoPhase):
     def __init__(self, clone_max=5):
@@ -167,5 +187,8 @@ class SimpleCloneLimitingPhase(EvoPhase):
             new_pop.append(rn.choice(new_pop))
 
         return population.update_pop(new_pop)
+
+    def __repr__(self):
+        return "SimpleCloneLimitingPhase clone_max=%d" % self.clone_max
 
 

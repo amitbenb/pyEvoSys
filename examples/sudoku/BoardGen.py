@@ -85,6 +85,9 @@ class SwapMutationPhase(Evolution.EvoPhase):
 
         return population
 
+    def __repr__(self):
+        return "Sudoku SwapMutationPhase prob=%.3f" % self.prob
+
 
 class GreedySwapMutationPhase(Evolution.EvoPhase):
     def __init__(self, width=1, depth=1, probability=1.0):
@@ -100,6 +103,9 @@ class GreedySwapMutationPhase(Evolution.EvoPhase):
                 self.mutate(ind)
 
         return population
+
+    def __repr__(self):
+        return "Sudoku GreedySwapMutationPhase prob=%.3f width=%d depth=%d" % (self.prob, self.width, self.depth)
 
     def mutate(self, ind):
         size = ind.size
@@ -206,6 +212,9 @@ class GreedyPopulationCrossoverPhase(Evolution.EvoPhase):
 
         return ret_val
 
+    def __repr__(self):
+        return "Sudoku GreedyPopulationCrossoverPhase prob=%.3f batch_size=%d" % (self.probability, self.batch_size)
+
 
 class FitnessEvaluationPhase(Evolution.EvoPhase):
     def run(self, population):
@@ -213,6 +222,9 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
             ind.calculate_fitness()
 
         return population
+
+    def __repr__(self):
+        return "Sudoku FitnessEvaluationPhase"
 
 
 class SaveSolutionsPhase(Evolution.EvoPhase):
@@ -232,6 +244,9 @@ class SaveSolutionsPhase(Evolution.EvoPhase):
                     # print(len(self.solutions))
 
         return population
+
+    def __repr__(self):
+        return "Sudoku FitnessEvaluationPhase"
 
 
 class FitnessDistorterPhase(Evolution.EvoPhase):
