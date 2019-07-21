@@ -8,6 +8,8 @@ import evo_core.evo_tools.Individuals as Individuals
 import examples.sudoku.Sudoku as Sudoku
 import examples.sudoku.SudokuConstants as SudConsts
 
+# import examples.sudoku.EvoParams as EPs
+
 DEBUG_OUTPUT = True
 
 
@@ -55,6 +57,26 @@ class BoardGenIndividual(Individuals.IntVectorIndividual):
 
     def __str__(self):
         return '\n' + str(self.phenome)
+
+
+class PopulationInitPhase(Evolution.EvoPhase):
+    def __init__(self, ind_list, constraints=None, size=SudConsts.BOARD_SIZE):
+        self.ind_list = ind_list
+        self.pop_size = len(ind_list)
+        self.constraints = constraints
+        self.size = size
+
+    def run(self, population):
+        # print([i for i in self.ind_list if i is None])
+        for idx, _ in enumerate(self.ind_list):
+            self.ind_list[idx] = BoardGenIndividual(
+                genome=generate_genome_for_constraints(self.size, constraints=self.constraints),
+                constraints=self.constraints, size=self.size)
+
+        # print([i for i in self.ind_list if i is None])
+        # input()
+        population.update_pop(self.ind_list)
+        return population
 
 
 class SwapMutationPhase(Evolution.EvoPhase):
@@ -228,7 +250,11 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
 
 
 class SaveSolutionsPhase(Evolution.EvoPhase):
-    def __init__(self):
+    def __init__(self,):
+        self.solutions = []
+        self.solution_hashes = []
+
+    def restart(self):
         self.solutions = []
         self.solution_hashes = []
 
@@ -273,6 +299,9 @@ class FitnessDistorterPhase(Evolution.EvoPhase):
                     ind.fitness = 0.0
         return population
 
+    def __repr__(self):
+        return "Sudoku FitnessDistorterPhase grace_period=%d generations" % self.solution_grace_period
+
 
 def generate_genome_for_constraints(size, constraints=None):
     if constraints is None:
@@ -290,5 +319,4 @@ def generate_genome_for_constraints(size, constraints=None):
                     k += 1
 
         return np.concatenate([i for i in ans])
-
 

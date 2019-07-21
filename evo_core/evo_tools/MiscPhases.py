@@ -53,6 +53,16 @@ class MaintainRecordBestsPhase(EvoPhase):
             out_file.close()
         self.debug_output = debug_output
 
+    def restart(self, best_ever_ind=None, out_file_path=None, debug_output=False):
+        self.gen_number = 0
+        self.best_ever_ind = best_ever_ind
+        if out_file_path != self.out_file_path:
+            self.out_file_path = out_file_path
+            if self.out_file_path is not None:
+                out_file = open(out_file_path, 'w')
+                out_file.close()
+        self.debug_output = debug_output
+
     def run(self, population):
         if self.debug_output is True:
             print('\nGeneration ' + str(self.gen_number) + ':')
