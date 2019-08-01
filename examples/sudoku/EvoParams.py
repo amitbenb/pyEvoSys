@@ -9,13 +9,13 @@ import examples.sudoku.BoardGen as BoardGen
 import examples.sudoku.SudokuConstants as Consts
 
 num_of_generations = 200
-pop_size = 50
+pop_size = 100
 mut_prob = 0.2
 gmut_prob = 1.0
 gmut_width = 10
 gmut_depth = 10
-tour_size = 3
-tour_winners = 2
+tour_size = 2
+tour_winners = 1
 elite_size = 4
 
 get_fitness = BoardGen.BoardGenIndividual.get_fitness
@@ -44,7 +44,8 @@ pop = PopContainers.SimplePopulationWithElite()
 
 null_select_p = Selection.SimpleNullSelectionPhase()
 select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=tour_size, tour_winners=tour_winners)
-mut_p = BoardGen.SwapMutationPhase(probability=mut_prob)
+# mut_p = BoardGen.SwapMutationPhase(probability=mut_prob)
+mut_p = BoardGen.SwapsMutationPhase(probability=mut_prob)
 gmut_p = BoardGen.GreedySwapMutationPhase(probability=gmut_prob, width=gmut_width, depth=gmut_depth)
 gxo_p = BoardGen.GreedyPopulationCrossoverPhase(probability=1.0, batch_size=4)
 eval_p = BoardGen.FitnessEvaluationPhase()

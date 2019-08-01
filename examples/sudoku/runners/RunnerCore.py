@@ -29,7 +29,7 @@ def write_experiment_preamble(init_cycle, cycle, end_cycle):
 
         fit_f.write("Population size: " + str(EPs.pop_size) + "\n")
         fit_f.write("Number of generations: " + str(EPs.num_of_generations) + "\n")
-        fit_f.write("\nSim#, Best_fitness\n")
+        fit_f.write("\nSim#, Best_fitness, #_of_Solutions\n")
 
 
 def write_cycle(out_file, cycle):

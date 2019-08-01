@@ -52,9 +52,13 @@ if __name__ == "__main__":
         print("Runtime: " + str(_t3 - _t2))
 
         with open(RPs.experiment_big_fit_out_file_name, 'a') as fit_f:
-            fit_f.write(str(i).zfill(3) + ', ' + str(record_p.best_ever_ind.get_fitness()) + '\n')
+            # Writing line in fitness file
+            fit_f.write(str(i).zfill(3) + ', ')
+            fit_f.write(str(record_p.best_ever_ind.get_fitness()) + ', ')
+            fit_f.write(str(len(EPs.save_solutions_p.solutions)) + '\n')
 
         with open(RPs.solution_file_name + str(i).zfill(3) + '.txt', 'w') as sol_f:
+            sol_f.write("Runtime: " + str(_t3 - _t2) + "\n")
             sol_f.write('Number of solutions = ' + str(len(EPs.save_solutions_p.solutions)) + '\n\n')
             for sol in EPs.save_solutions_p.solutions:
                 sol_f.write(str(sol) + '\n\n')

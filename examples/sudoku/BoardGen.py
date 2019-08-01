@@ -89,7 +89,7 @@ class SwapMutationPhase(Evolution.EvoPhase):
             if r.random() < prob:
                 size = ind.size
                 constraints = ind.constraints
-                while True:
+                while True:  # Find a legal swap.
                     row = r.choice(range(size))
                     cols = r.sample(range(size), 2)
                     if constraints is None or (constraints[row][cols[0]] == 0 and constraints[row][cols[1]] == 0):
@@ -109,6 +109,37 @@ class SwapMutationPhase(Evolution.EvoPhase):
 
     def __repr__(self):
         return "Sudoku SwapMutationPhase prob=%.3f" % self.prob
+
+
+class SwapsMutationPhase(Evolution.EvoPhase):
+    def __init__(self, probability=1.0):
+        self.prob = probability
+
+    def run(self, population):
+        prob = self.prob
+        for ind in population:
+            if r.random() < prob:
+                while True:  # Find a legal swap.
+                    size = ind.size
+                    constraints = ind.constraints
+
+                    while True:  # Allows multiple swaps
+                        row = r.choice(range(size))
+                        cols = r.sample(range(size), 2)
+                        if constraints is None or (constraints[row][cols[0]] == 0 and constraints[row][cols[1]] == 0):
+                            ind.rewrite_multiple_genes([size * row + cols[0], size * row + cols[1]],
+                                                       [ind.genome[size * row + cols[1]],
+                                                        ind.genome[size * row + cols[0]]])
+                            break
+
+                    if r.random() < 0.5:
+                        # Prob 0.5 for a single swap, 0.25 for two swaps, 0.125 three swaps, etc.
+                        break
+
+        return population
+
+    def __repr__(self):
+        return "Sudoku SwapsMutationPhase prob=%.3f" % self.prob
 
 
 class GreedySwapMutationPhase(Evolution.EvoPhase):
