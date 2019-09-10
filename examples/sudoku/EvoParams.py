@@ -9,7 +9,7 @@ import examples.sudoku.BoardGen as BoardGen
 import examples.sudoku.SudokuConstants as Consts
 
 num_of_generations = 200
-pop_size = 100
+pop_size = 200
 mut_prob = 0.2
 gmut_prob = 1.0
 gmut_width = 10
@@ -23,9 +23,10 @@ calculate_fitness = BoardGen.BoardGenIndividual.calculate_fitness
 
 size = examples.sudoku.SudokuConstants.BOARD_SIZE
 # constraints = None
-# constraints = Consts.EASY_BOARD
+constraints = Consts.EASY_BOARD
 # constraints = Consts.HARD_BOARD
-constraints = Consts.one_line_board()
+# constraints = Consts.one_line_board()
+
 # inds = [BoardGen.BoardGenIndividual(
 #     genome=np.concatenate(tuple(np.random.permutation(range(1, size + 1)) for _ in range(size))),
 #     size=size)
