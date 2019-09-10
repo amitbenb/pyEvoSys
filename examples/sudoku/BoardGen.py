@@ -303,7 +303,7 @@ class SaveSolutionsPhase(Evolution.EvoPhase):
         return population
 
     def __repr__(self):
-        return "Sudoku FitnessEvaluationPhase"
+        return "Sudoku SaveSolutionsPhase"
 
 
 class FitnessDistorterPhase(Evolution.EvoPhase):
