@@ -11,8 +11,8 @@ from evo_core.evo_tools.MiscPhases import SimpleInitPhase
 
 class Max1individual(Individuals.IntVectorIndividual):
     def __init__(self, genome):
-        super(Max1individual, self).__init__(genome, 2)
-        self.fitness = self.genome.count(1)
+        super(Max1individual, self).__init__(genome, min_int=0, max_int=1)
+        self.fitness = self.calculate_fitness()
 
     def self_replicate(self):
         return cp.deepcopy(self)
@@ -50,8 +50,8 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
 
 if __name__ == "__main__":
     num_of_generations = 100
-    pop_size = 25
-    genome_len = 50
+    pop_size = 100
+    genome_len = 30
     inds = [Max1individual([rn.randint(0, 1) for _ in range(genome_len)]) for _ in range(pop_size)]
     # pop = PopContainers.SimplePopulation()
     pop = PopContainers.SimplePopulationWithElite()
@@ -59,7 +59,7 @@ if __name__ == "__main__":
 
     get_fitness = Max1individual.get_fitness
     init_p = SimpleInitPhase(num_of_generations)
-    select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=4)
+    select_p = Selection.TournamentSelectionPhase(get_fitness, tour_size=2)
     mut_p = UMutationPhase()
     eval_p = FitnessEvaluationPhase()
     record_p = MiscPhases.MaintainRecordBestsPhase(get_fitness, out_file_path='output/out.txt')

@@ -21,8 +21,9 @@ class VectorIndividual(Individual):
     def perform_uniform_plus_mutation(self, mutation_probability=None):
         if not mutation_probability:
             mutation_probability = 1.0/len(self)
-            locations, new_genes = self.get_uniform_plus_mutation_stats(mutation_probability)
-            self.rewrite_multiple_genes(locations, new_genes)
+
+        locations, new_genes = self.get_uniform_plus_mutation_stats(mutation_probability)
+        self.rewrite_multiple_genes(locations, new_genes)
 
     def perform_swap_mutation(self, mutation_probability=1.0):
         if r.random() < mutation_probability:
@@ -77,6 +78,9 @@ class VectorIndividual(Individual):
                 if (i not in locations) and (r.random() < probability):
                     locations.append(i)
                     new_genes.append(self.generate_new_gene_sequence(1)[0])
+        # print(locations)
+        # print(new_genes)
+        # input()
         return locations, new_genes
 
     def get_random_xo_points(self, num_of_points):
@@ -199,7 +203,8 @@ class IntVectorIndividual(VectorIndividual):
     def generate_new_gene_sequence(self, length):
         ret_val = []
         for i in range(length):
-            ret_val.append(r.randrange(self.min_int, self.max_int))
+            ret_val.append(r.randint(self.min_int, self.max_int))
+        # print(self.max_int, 'X', ret_val)
         return ret_val
 
     # Action tools
