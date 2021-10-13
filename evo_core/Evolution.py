@@ -1,5 +1,5 @@
 from abc import ABCMeta
-from collections import Iterable
+from collections.abc import Iterable
 import time as t
 
 _debug_output_flag = False
