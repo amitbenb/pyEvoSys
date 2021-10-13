@@ -55,9 +55,9 @@ class GPArray(inds.VectorIndividual):
             grow_params['random_terminal_func']() for i in range(inner_size, size)]
 
 
-class GPNode(metaclass=ABCMeta):
-    def __init__(self):
-        raise NotImplementedError()
-
-    def grow(self, parent=None):
-        raise NotImplementedError()
+# class GPNode(metaclass=ABCMeta):
+#     # def __init__(self):
+#     #     raise NotImplementedError()
+#
+#     def grow(self, parent=None):
+#         raise NotImplementedError()
