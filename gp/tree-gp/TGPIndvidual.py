@@ -1,11 +1,8 @@
 from abc import ABCMeta
+from gp import GPIndvidual
 
 
-class GPIndividual(metaclass=ABCMeta):
-    pass
-
-
-class GPTree(metaclass=ABCMeta):
+class GPTree(GPIndvidual):
     def __init__(self, node=None):
         self.root = node
 
