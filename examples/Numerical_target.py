@@ -42,11 +42,17 @@ class NumericalTargetIndividual(AGPIndividual.AGPIndividual):
 
     def get_func(self, node_code):
         # TODO: TODO or to overload.
+        def plus(a, b): return a + b
+        def minus(a, b): return a - b
+        def plus01(a, b): return a + 0.1 * b
+        def minus01(a, b): return a - 0.1 * b
+
         func_array = [
-            lambda a, b: a + b,
-            lambda a, b: a - b,
-            lambda a, b: a + b * 0.1,
-            lambda a, b: a - b * 0.1
+            plus, minus, plus01, minus01
+            # lambda a, b: a + b,
+            # lambda a, b: a - b,
+            # lambda a, b: a + b * 0.1,
+            # lambda a, b: a - b * 0.1
         ]
         index = int(len(func_array) * (node_code - minimum_float) / float_range_size)
         return func_array[index]
@@ -90,8 +96,8 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
 
 
 if __name__ == "__main__":
-    numerical_target = 4.3
-    num_of_generations = 20
+    numerical_target = 14.3
+    num_of_generations = 100
     pop_size = 100
     genome_len = 30
     inds = [NumericalTargetIndividual(target=numerical_target) for _ in range(pop_size)]

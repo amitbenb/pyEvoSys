@@ -12,6 +12,9 @@ class AGPIndividual(inds.VectorIndividual):
     # def set_tree(self, node):
     #     self.root = node
 
+    def __str__(self):
+        return self.str_rec(self.get_root())
+
     def get_root(self):
         return 0  # default index of root
 
@@ -99,6 +102,19 @@ class AGPIndividual(inds.VectorIndividual):
                 raise RuntimeError('child is not denoted as left (l) or right (r). Rather: ' + ch)
 
         return index
+
+    def str_rec(self, index):
+        node: dict = self.phenome[index] if index < len(self) else {}
+
+        if node == {}:
+            return str(self.get_default_value())
+        elif node['Terminal']:
+            return str(node['value'])
+        else:
+            func = self.get_func(node['value'])
+            args_nodes = sorted(node.get('children', ('l', 'r')))  # Nodes for arguments of function
+            args_names = tuple([self.str_rec(self.get_index(index, arg)) for arg in args_nodes])  # Arguments of function
+            return '(' + func.__name__ + ' ,' + ' ,'.join(args_names) +')'
 
 # class GPNode(metaclass=ABCMeta):
 #     # def __init__(self):
