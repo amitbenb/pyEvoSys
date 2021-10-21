@@ -1,9 +1,10 @@
+from abc import ABCMeta
 import copy as cp
 import random as r
 from evo_core.Population_Containers import Individual
 
 
-class VectorIndividual(Individual):
+class VectorIndividual(Individual, metaclass=ABCMeta):
     def __init__(self, genome):
         self.genome = cp.deepcopy(genome)
 
@@ -96,26 +97,7 @@ class VectorIndividual(Individual):
                 locations.append(i)
         return locations
 
-    def copy_paste_genes(self, location1, location2, length):
-        self.genome[location2:location2 + length] = self.genome[location1:location1 + length]
-
-    def cut_paste_genes(self, location1, location2, length):
-        genes = self.genome[location1:location1 + length]
-        self.genome = self.genome[:location1]+self.genome[location1+length:]
-        if location2 <= location1:
-            self.genome = self.genome[:location2]+genes+self.genome[location2+length:]
-        elif location2 <= location1+length:
-            # Do nothing.
-            self.genome = self.genome[:location1]+genes+self.genome[location1+length:]
-        else:  # location2 > location1+length.adjust index change in genome.
-            self.genome = self.genome[:location2-length]+genes+self.genome[location2:]
-
     # Action tools
-
-    def rewrite_genes(self, location, genes):
-        self.genome[location:location+len(genes)] = genes
-        # for i in range(len(genes)):
-        #     self.genome[location + i] = genes[i]
 
     def rewrite_multiple_genes(self, locations, genes):
         """
@@ -127,25 +109,6 @@ class VectorIndividual(Individual):
         """
         for i in range(len(locations)):
             self.genome[locations[i]] = genes[i]
-
-    def copy_paste_genes(self, location1, location2, length):
-        self.genome[location2:location2 + length] = self.genome[location1:location1 + length]
-
-    def cut_paste_genes(self, location1, location2, length):
-        genes = self.genome[location1:location1 + length]
-        self.genome = self.genome[:location1]+self.genome[location1+length:]
-        if location2 <= location1:
-            self.genome = self.genome[:location2]+genes+self.genome[location2+length:]
-        elif location2 <= location1+length:
-            # Do nothing.
-            self.genome = self.genome[:location1]+genes+self.genome[location1+length:]
-        else:  # location2 > location1+length.adjust index change in genome.
-            self.genome = self.genome[:location2-length]+genes+self.genome[location2:]
-
-    def rewrite_genes(self, location, genes):
-        self.genome[location:location+len(genes)] = genes
-        # for i in range(len(genes)):
-        #     self.genome[location + i] = genes[i]
 
     def copy_paste_genes(self, location1, location2, length):
         self.genome[location2:location2 + length] = self.genome[location1:location1 + length]

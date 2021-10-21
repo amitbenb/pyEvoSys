@@ -1,0 +1,32 @@
+Number of simulations: 10
+Size of board: 16
+Initialization cycle: 
+	<examples.sudoku.BoardGen.PopulationInitPhase object at 0x000001FA7572AF98>
+	SimpleInitPhase gen_limit=2000
+	Sudoku FitnessEvaluationPhase
+	MaintainBestsPhase
+	Sudoku FitnessEvaluationPhase
+
+Main cycle: 
+	BinnedTournamentSelectionPhase tour_size=2 winners=1 target_length=None
+	Sudoku SwapsMutationPhase prob=0.200
+	Sudoku GreedySwapMutationPhase prob=1.000 width=10 depth=10
+	Sudoku FitnessEvaluationPhase
+	MaintainBestsPhase
+	Sudoku FitnessEvaluationPhase
+	Sudoku FitnessDistorterPhase grace_period=100 generations
+
+Population size: 1000
+Number of generations: 2000
+
+Sim#, Best_fitness
+000, 100.0
+001, 100.0
+002, 100.0
+003, 100.0
+004, 100.0
+005, 100.0
+006, 100.0
+007, 100.0
+008, 33.33333333333333
+009, 100.0

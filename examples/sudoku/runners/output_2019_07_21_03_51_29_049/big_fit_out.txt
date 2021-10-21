@@ -1,0 +1,23 @@
+Number of simulations: 10
+Size of board: 16
+Initialization cycle: 
+	SimpleInitPhase gen_limit=2000
+	Sudoku FitnessEvaluationPhase
+	MaintainBestsPhase
+	Sudoku FitnessEvaluationPhase
+
+Main cycle: 
+	BinnedTournamentSelectionPhase tour_size=3 winners=2 target_length=None
+	Sudoku SwapMutationPhase prob=0.200
+	Sudoku GreedySwapMutationPhase prob=1.000 width=10 depth=10
+	Sudoku FitnessEvaluationPhase
+	MaintainBestsPhase
+	Sudoku FitnessEvaluationPhase
+	Sudoku FitnessDistorterPhase grace_period=100 generations
+
+Population size: 1000
+Number of generations: 2000
+
+Sim#, Best_fitness
+000, 100.0
+001, 100.0

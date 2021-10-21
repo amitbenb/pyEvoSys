@@ -1,0 +1,5 @@
+# Default ignored files
+/workspace.xml
+
+# Sudoku output files
+/examples/sudoku/**/output*/*.txt

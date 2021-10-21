@@ -1,0 +1,3 @@
+Runtime: 230.38833165168762
+Number of solutions = 0
+
