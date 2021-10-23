@@ -11,26 +11,19 @@ from evo_core.evo_tools import Selection
 from evo_core.evo_tools import MiscPhases
 from evo_core.evo_tools.MiscPhases import SimpleInitPhase
 
-from gp.array_gp import AGPIndividual
+from gp.array_gp.AGPIndividual import AGPIndividual
+from gp.GPIndividual import GPIndividual
 import random as rand
 
+AGPIndividual.minimum_float = 0.0
+AGPIndividual.maximum_float = 2.0
 
-minimum_float, maximum_float = 0.0, 2.0
-float_range_size = maximum_float - minimum_float
 
-
-class NumericalTargetIndividual(AGPIndividual.AGPIndividual):
+class NumericalTargetIndividual(AGPIndividual):
     def __init__(self, genome=None, target=0.0):
         super(NumericalTargetIndividual, self).__init__(genome)
         self.fitness = float('-inf')
         self.target = target
-
-    def generate_new_gene_sequence(self, length):
-        ret_val = []
-        for i in range(length):
-            ret_val.append(return_random_node())
-        # print(self.max_int, 'X', ret_val)
-        return ret_val
 
     def calculate_fitness(self):
         self.develop()
@@ -40,38 +33,16 @@ class NumericalTargetIndividual(AGPIndividual.AGPIndividual):
     def get_fitness(self):
         return self.fitness
 
-    def get_func(self, node_code):
-        # TODO: TODO or to overload.
-        def plus(a, b): return a + b
-        def minus(a, b): return a - b
-        def plus01(a, b): return a + 0.1 * b
-        def minus01(a, b): return a - 0.1 * b
-
-        func_array = [
-            plus, minus, plus01, minus01
-            # lambda a, b: a + b,
-            # lambda a, b: a - b,
-            # lambda a, b: a + b * 0.1,
-            # lambda a, b: a - b * 0.1
-        ]
-        index = int(len(func_array) * (node_code - minimum_float) / float_range_size)
-        return func_array[index]
-
-
-def random_float_content(min_f=minimum_float, max_f=maximum_float):
-    return rand.random() * (max_f - min_f) + min_f
-
-
-def return_random_node():
-    return {'value': random_float_content(), 'Terminal': rand.choice([False for _ in range(4)] + [True])}
-
-
-def return_random_terminal():
-    return {'value': random_float_content(), 'Terminal': True}
-
-
-def return_random_function():
-    return {'value': random_float_content(), 'Terminal': False}
+    # @classmethod
+    # def get_func(cls, node_code):
+    #     def add(a, b): return a + b
+    #     def sub(a, b): return a - b
+    #     def plus01(a, b): return a + 0.1 * b
+    #     def minus01(a, b): return a - 0.1 * b
+    #
+    #     func_array = [add, sub, plus01, minus01]
+    #     index = int(len(func_array) * (node_code - cls.minimum_float) / cls.get_float_range_size())
+    #     return func_array[index]
 
 
 class UMutationPhase(Evolution.EvoPhase):
@@ -96,17 +67,25 @@ class FitnessEvaluationPhase(Evolution.EvoPhase):
 
 
 if __name__ == "__main__":
+    def plus01(a, b): return a + 0.1 * b
+    def minus01(a, b): return a - 0.1 * b
+
+    import gp.GP_Basic_Functions as fs
+    GPIndividual.add_function_nodes([plus01, minus01, fs.sub, fs.add])
+    # GPIndividual.add_function_node(plus01)
+    # GPIndividual.add_function_node(minus01)
+
     numerical_target = 14.3
     num_of_generations = 100
     pop_size = 100
-    genome_len = 30
+    genome_len = 63
     inds = [NumericalTargetIndividual(target=numerical_target) for _ in range(pop_size)]
     grow_params = {
         'grow_type': 'Random',
-        'size': 15,
-        'random_node_func': return_random_node,
-        'random_func_func': return_random_terminal,
-        'random_terminal_func': return_random_function
+        'size': genome_len
+        # 'random_node_func': return_random_node,
+        # 'random_func_func': return_random_terminal,
+        # 'random_terminal_func': return_random_function
     }
     for ind in inds:
         ind.grow(grow_params)

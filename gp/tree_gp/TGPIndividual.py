@@ -1,8 +1,8 @@
 from abc import ABCMeta
-from gp import GPIndvidual
+from gp import GPIndividual
 
 
-class GPTree(GPIndvidual):
+class TGPIndividual(GPIndividual):
     def __init__(self, node=None):
         self.root = node
 
