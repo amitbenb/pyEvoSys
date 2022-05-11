@@ -1,5 +1,4 @@
 import evo_core.Population_Containers as PopContainers
-import evo_core.Evolution as Evolution
 import examples.sudoku.SudokuConstants
 
 from evo_core.evo_tools import Selection
