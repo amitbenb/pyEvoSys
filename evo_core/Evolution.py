@@ -18,6 +18,9 @@ class Evolution:
 
         return p
 
+    def documentation_list(self):
+        return [self.__class__.__name__] + [ep.documentation_list() for ep in self.epochs]
+
 
 class Epoch:
     def __init__(self, epoch_body, init_cycle=[], end_cycle=[]):
@@ -38,9 +41,18 @@ class Epoch:
 
         return p
 
+    def documentation_list(self):
+        return [self.__class__.__name__,
+                Cycle(self.init_cycle).documentation_list(),
+                self.epoch_body.documentation_list(),
+                Cycle(self.end_cycle).documentation_list()]
+
 
 class EpochBody(metaclass=ABCMeta):
     def run(self, population):
+        raise NotImplementedError()
+
+    def documentation_list(self):
         raise NotImplementedError()
 
 
@@ -66,6 +78,9 @@ class EpochBasicBody(EpochBody):
 
         return p
 
+    def documentation_list(self):
+        return [self.__class__.__name__, [self.cycle.documentation_list()]]
+
 
 class Cycle:
     def __init__(self, phases):
@@ -81,8 +96,18 @@ class Cycle:
 
         return p
 
+    def documentation_list(self):
+        return [self.__class__.__name__ + str(len(self.phases))] \
+               + [ph.documentation_list() for ph in self.phases]
+
 
 class EvoPhase(metaclass=ABCMeta):
     def run(self, population):
         raise NotImplementedError()
 
+    def __repr__(self):
+        return self.__class__.__name__
+
+    def documentation_list(self):
+        rep = repr(self).split('\n')
+        return rep

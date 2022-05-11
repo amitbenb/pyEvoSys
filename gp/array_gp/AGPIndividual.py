@@ -1,6 +1,7 @@
 from abc import ABCMeta
 import random as rand
 import copy as cp
+from inspect import getfullargspec
 from evo_core.evo_tools import Individuals as inds
 from gp.GPIndividual import GPIndividual
 
@@ -37,10 +38,16 @@ class AGPIndividual(inds.VectorIndividual, GPIndividual):
         if node == {}:
             return self.get_default_value()
         elif node['Terminal']:
-            return node['value']
+            #TODO: This has to be a function call.
+            #      The inhereted classes will have access to input.
+            #      The function called will use the input to interpret node['value']
+
+            # return node['value']
+            term = self.get_terminal_object(node['value'])
+            return term.run()
         else:
             func = self.get_func(node['value'])
-            args_nodes = sorted(node.get('children', ('l', 'r')))  # Nodes for arguments of function
+            args_nodes = self.get_func_children(func)  # Nodes for arguments of function
             args = tuple([self.run_rec(self.get_index(index, arg)) for arg in args_nodes])  # Arguments of function
             return func(*args)
 
@@ -107,9 +114,33 @@ class AGPIndividual(inds.VectorIndividual, GPIndividual):
         return ret_val
 
     @classmethod
-    def get_func(cls, node_code):
-        # TODO: TODO or to overload.
-        funcs_array = cls.funcs_array
+    def get_terminal_object(cls, node_code, f_type=type(None)):
+        """
+
+        :param node_code: a floating point number in the AGP individual's genome which encodes a terminal
+        :return: An object of  that fits node_code
+        """
+        if GPIndividual.typed_flag:
+            terms_array = cls.terminals_arrays[f_type]
+        else:
+            terms_array = cls.terminals_arrays
+        index = int(len(terms_array) * (node_code - cls.minimum_float) / cls.get_float_range_size())
+        # print(node_code, len(funcs_array), index)
+        # input()
+        return terms_array[index](node_code, cls.minimum_float, cls.maximum_float)
+
+    @classmethod
+    def get_func(cls, node_code, f_type=type(None)):
+        """
+
+        :param node_code: a floating point number in the AGP individual's genome which encodes a function
+        :return: A function that fits node_code
+        """
+        # TODO?: TODO or to overload?.
+        if GPIndividual.typed_flag:
+            funcs_array = cls.funcs_arrays[f_type]
+        else:
+            funcs_array = cls.funcs_arrays
         index = int(len(funcs_array) * (node_code - cls.minimum_float) / cls.get_float_range_size())
         # print(node_code, len(funcs_array), index)
         # input()
@@ -169,10 +200,12 @@ class AGPIndividual(inds.VectorIndividual, GPIndividual):
         if node == {}:
             return str(self.get_default_value())
         elif self.is_terminal(node):
-            return str(self.get_node_value(node))
+            term = self.get_terminal_object(node['value'])
+            return str(term)
+            # return str(self.get_node_value(node))
         else:
             func = self.get_func(self.get_node_value(node))
-            args_nodes = self.get_node_children(node)  # Nodes for arguments of function
+            args_nodes = self.get_func_children(func)  # Nodes for arguments of function
             args_names = tuple([self.str_rec(self.get_index(index, arg)) for arg in args_nodes])  # Arguments of function
             return '(' + func.__name__ + ', ' + ', '.join(args_names) +')'
 
@@ -192,8 +225,11 @@ class AGPIndividual(inds.VectorIndividual, GPIndividual):
 
         return node["Terminal"]
 
-    def get_node_children(self, node, default=('l', 'r')):
-        return sorted(node.get('children', ('l', 'r')))
+    def get_func_children(self, func, default=('l', 'r')):
+        # getfullargspec(func)[0] returns the argument list for func.
+        # Its length is the number of arguments.
+        default_children = [(), ('l'),  ('l', 'r'),  ('l', 'rl', 'rr'), ('ll', 'lr', 'rl', 'rr')]
+        return sorted(func.__dict__.get('children', default_children[len(getfullargspec(func)[0])]))
 
 # class GPNode(metaclass=ABCMeta):
 #     # def __init__(self):

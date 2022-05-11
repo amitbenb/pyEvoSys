@@ -71,14 +71,19 @@ if __name__ == "__main__":
     def minus01(a, b): return a - 0.1 * b
 
     import gp.GP_Basic_Functions as fs
-    GPIndividual.add_function_nodes([plus01, minus01, fs.sub, fs.add])
+    # AGPIndividual.add_function_nodes([plus01, minus01, fs.sub, fs.add])
+    AGPIndividual.add_function_nodes([fs.ifle, fs.if0,  fs.sub, fs.add, fs.uminus])
+    # AGPIndividual.add_function_nodes([fs.ifle])
     # GPIndividual.add_function_node(plus01)
     # GPIndividual.add_function_node(minus01)
 
-    numerical_target = 14.3
-    num_of_generations = 100
-    pop_size = 100
-    genome_len = 63
+    import gp.GP_Basic_Terminals as ts
+    AGPIndividual.add_terminal_nodes([ts.GP_Ugly_Float_Constant])
+
+    numerical_target = 2.5
+    num_of_generations = 40
+    pop_size = 50
+    genome_len = 31
     inds = [NumericalTargetIndividual(target=numerical_target) for _ in range(pop_size)]
     grow_params = {
         'grow_type': 'Random',
