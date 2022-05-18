@@ -19,14 +19,15 @@ class Evolution:
         return p
 
     def documentation_list(self):
-        return [self.__class__.__name__] + [ep.documentation_list() for ep in self.epochs]
+        return ([self.__class__.__name__  + ' ' + str(len(self.epochs))]
+                + [ep.documentation_list() for ep in self.epochs])
 
 
 class Epoch:
     def __init__(self, epoch_body, init_cycle=[], end_cycle=[]):
         self.epoch_body = epoch_body
-        self.init_cycle = init_cycle
-        self.end_cycle = end_cycle
+        self.init_cycle = Cycle([]) if init_cycle == [] else init_cycle
+        self.end_cycle = Cycle([]) if end_cycle == [] else end_cycle
 
     def run(self, population):
         p = population
@@ -43,9 +44,9 @@ class Epoch:
 
     def documentation_list(self):
         return [self.__class__.__name__,
-                Cycle(self.init_cycle).documentation_list(),
+                self.init_cycle.documentation_list(),
                 self.epoch_body.documentation_list(),
-                Cycle(self.end_cycle).documentation_list()]
+                self.end_cycle.documentation_list()]
 
 
 class EpochBody(metaclass=ABCMeta):
@@ -97,8 +98,8 @@ class Cycle:
         return p
 
     def documentation_list(self):
-        return [self.__class__.__name__ + str(len(self.phases))] \
-               + [ph.documentation_list() for ph in self.phases]
+        return ([self.__class__.__name__ + ' ' + str(len(self.phases))]
+                + [ph.documentation_list() for ph in self.phases])
 
 
 class EvoPhase(metaclass=ABCMeta):

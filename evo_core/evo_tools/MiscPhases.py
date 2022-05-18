@@ -73,7 +73,7 @@ class SimpleEvolutionDocumentationPhase(EvoPhase):
                                 .format(idx, type(itm)))
             elif type(itm) is str:
                 ret_val.append(depth * '\t' + itm + '\n')
-                print(depth * '\t' + itm)
+                # print(depth * '\t' + itm)
             else:  # type(doc_list) is list
                 ret_val += SimpleEvolutionDocumentationPhase.fix_list(itm, depth + 1)
 
